@@ -1,0 +1,98 @@
+{% extends 'index.html' %}
+{% block content %}
+    {#        <div class="card mb-3">#}
+    {##}
+    {#            <div class="card-body">#}
+    {##}
+    {#                <div class="pt-4 pb-2">#}
+    {#                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>#}
+    {#                    <p class="text-center small">Enter your personal details to create account</p>#}
+    {#                </div>#}
+    {#                {% with messages = get_flashed_messages() %}#}
+    {#                    {% if messages %}#}
+    {#                        <div class="alert alert-danger alert-dismissible fade show">#}
+    {#                            {{ messages[0] }}<br> Go to <a href="{{ url_for('auth.login') }}">login page</a>.#}
+    {#                        </div>#}
+    {#                    {% endif %}#}
+    {#                {% endwith %}#}
+    {#                <form method="POST" action="/signup" class="row g-3 needs-validation" novalidate>#}
+    {#                    <div class="col-12">#}
+    {#                        <label for="yourUsername" class="form-label">Username</label>#}
+    {#                        <div class="input-group has-validation">#}
+    {#                            <input type="text" name="username" class="form-control" id="yourUsername"#}
+    {#                                   required>#}
+    {#                            <div class="invalid-feedback">Please enter your username.</div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                    <div class="col-12">#}
+    {#                        <label for="yourPassword" class="form-label">Password</label>#}
+    {#                        <input type="password" name="password" class="form-control" id="yourPassword"#}
+    {#                               required>#}
+    {#                        <div class="invalid-feedback">Please enter your password!</div>#}
+    {#                    </div>#}
+    {#                    <div class="col-12">#}
+    {#                        <button class="btn btn-primary w-100" type="submit">Sign Up</button>#}
+    {#                    </div>#}
+    {##}
+    {#                </form>#}
+    {##}
+    {#            </div>#}
+    {#        </div>#}
+
+    <div class="card mb-3">
+        <div class="card-body">
+
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">Create an Account!</h5>
+            </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        {{ messages[0] }}<br> Go to <a href="{{ url_for('auth.login') }}">login page</a>.
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/signup" class="row g-3 needs-validation">
+                <div class="col-12">
+                    <label for="yourUsername" class="form-label">Username</label>
+                    <div class="input-group has-validation">
+                        <input type="text" name="username" class="form-control" id="yourUsername"
+                               required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="yourEmail" class="form-label">Email</label>
+                    <div class="input-group has-validation">
+                        <input type="email" name="email" class="form-control" id="yourEmail"
+                               required>
+                        <div class="invalid-feedback">Please enter your email.</div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="yourPassword" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="yourPassword"
+                           required>
+                    <div class="invalid-feedback">Please enter your password!</div>
+                </div>
+                <div class="col-12">
+                    <label for="yourConfirmedPassword" class="form-label">Confirm your password</label>
+                    <input type="password" name="confirmedPassword" class="form-control" id="yourConfirmedPassword"
+                           required>
+                    <div class="invalid-feedback">Please confirm your password!</div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit">Sign Up</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div class="col-12">
+        <div class="text-center">
+            <h2 class="lead text-gray-800 mb-5">Thank you for your registration!</h2>
+            <p class="lead text-gray-800 mb-5">We received your information,
+                we will inform you by email after granting for your access, thank you.</p>
+        </div>
+        <a href="{{ url_for('main.home') }}">&larr; Back to Home</a>
+    </div>
+
+{% endblock %}

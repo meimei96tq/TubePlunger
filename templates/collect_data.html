@@ -1,0 +1,130 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div class="col-12">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                  action="/collect_data" method="post">
+                <div class="input-group">
+                    <input name="input" type="text" class="form-control bg-light border-0 small"
+                           placeholder="Input channel id"
+                           aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </nav>
+
+    </div>
+    {% if flag == "Inserted" %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            This channel is being collected!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    {% if flag == "Not_Exist" %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            The input channel id is not correct! Please refer <a
+                href="https://commentpicker.com/youtube-channel-id.php " class="alert-link" target="_blank">this
+            link</a> to check channel id and try again!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    {% if flag == "Duplicated" %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            This channel is already in the database, please refer the below table!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Data Collection</h6>
+            </div>
+            <div class="card-body">
+                {#                {% if channels != [] %}#}
+                <div class="table-responsive">
+                    <table class="table" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Channel</th>
+                            <th>#Videos</th>
+                            <th>#Comments</th>
+                            <th>#Users</th>
+                            <th>Political bias</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in channels %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                {% if row['channel_title'].lower() in main_channels %}
+                                    <td><a href="https://www.youtube.com/channel/{{ row["channel_id"] }}"
+                                           target="_blank">{{ row["channel_title"] }}*</a></td>
+                                {% endif %}
+                                {% if row['channel_title'].lower() not in main_channels %}
+                                    <td><a href="https://www.youtube.com/channel/{{ row["channel_id"] }}"
+                                           target="_blank">{{ row["channel_title"] }}</a></td>
+                                {% endif %}
+
+                                <td>{{ row["videos_count"] }}</td>
+                                <td>{{ row["comments_count"] }}</td>
+                                <td>{{ row["users_count"] }}</td>
+                                <td>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-primary shadow-none" role="progressbar"
+                                             style="width: {{ row["leftwing_bias"] }}%"
+                                             aria-valuenow="15" aria-valuemin="0"
+                                             aria-valuemax="100"> {{ row["leftwing_bias"] }} </div>
+                                        <div class="progress-bar bg-danger shadow-none" role="progressbar"
+                                             style="width: {{ row["rightwing_bias"] }}%"
+                                             aria-valuenow="30" aria-valuemin="0"
+                                             aria-valuemax="100">{{ row["rightwing_bias"] }}</div>
+                                    </div>
+                                </td>
+                                <td>{{ row['status'] }}</td>
+                                <td>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                             aria-labelledby="dropdownMenuLink" style="">
+                                            <a class="dropdown-item"
+                                               href="{{ url_for('main.channel_statistics',channel_name=row["channel_title"]) }}">View</a>
+                                            {% if row['channel_title'].lower() not in main_channels %}
+{#                                                <a class="dropdown-item" href="#">Stop collect</a>#}
+                                                <a class="dropdown-item" href="#">Delete</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <h7><i>(*) The data of these channels has been collected since January 2019</i></h7>
+                {#                {% endif %}#}
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/table.js') }}"></script>
+
+
+{% endblock %}

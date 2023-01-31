@@ -1,0 +1,232 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div class="col-12">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                  action="/user_tracking" method="post">
+                <div class="input-group">
+                    <input name="input" type="text" class="form-control bg-light border-0 small"
+                           placeholder="Search user..."
+                           aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </nav>
+
+    </div>
+
+    {% if user_id != '' %}
+        <div class="col-12 bg-white">
+        <h6 class="m-0 font-weight-bold text-primary">User: {{ user_id }}</h6>
+        <br>
+
+        {#            <div class="card shadow mb-4">#}
+        {#                <div class="card-header py-3">#}
+        {#                    <h6 class="m-0 font-weight-bold text-primary">User: {{ user_id }}</h6>#}
+        {#                </div>#}
+        {#                <div class="card-body">#}
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="left_wing_tab" data-toggle="pill" href="#left_wing"
+                   role="tab" aria-controls="left_wing" aria-selected="true">Left</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="right_wing_tab" data-toggle="pill" href="#right_wing"
+                   role="tab" aria-controls="right_wing" aria-selected="false">Right</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="left_wing" role="tabpanel"
+                 aria-labelledby="left_wing_tab">
+                {% if left_count[3] != 0 %}
+                    <br>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success shadow-none" role="progressbar"
+                             style="width: {{ left_count[0]*100/left_count[3] }}%"
+                             aria-valuenow="15" aria-valuemin="0"
+                             aria-valuemax="100"> #positive-comments {{ left_count[0] }} </div>
+                        <div class="progress-bar bg-danger shadow-none" role="progressbar"
+                             style="width: {{ left_count[1]*100/left_count[3] }}%"
+                             aria-valuenow="30" aria-valuemin="0"
+                             aria-valuemax="100">#negative-comments {{ left_count[1] }}</div>
+                        <div class="progress-bar bg-warning shadow-none" role="progressbar"
+                             style="width: {{ left_count[2]*100/left_count[3] }}%"
+                             aria-valuenow="20" aria-valuemin="0"
+                             aria-valuemax="100">#undefined-comments {{ left_count[2] }}</div>
+                    </div>
+                    <div id='chart_left_wing'></div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Comments history of
+                                user {{ user_id }} on left-wing channels</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Video</th>
+                                        <th>Comment</th>
+                                        <th>Channel</th>
+                                        <th>Comment date</th>
+                                        <th>Comment tag</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in left_wing_comments %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td style="max-width:100px; white-space: nowrap; overflow: hidden;
+                                        text-overflow: ellipsis">
+                                                <a href="https://www.youtube.com/watch?v={{ row["video_id"] }}"
+                                                   target="_blank">{{ row["video_title"] }}</a></td>
+                                            <td>{{ row["comment_content"] }}</td>
+                                            <td><a href="https://www.youtube.com/{{ row["channel_title"] }}"
+                                                   target="_blank">{{ row["channel_title"] }}</a></td>
+                                            <td>{{ row["comment_postdate"] }}</td>
+                                            {% if row["sentiment"] == "Undefined" %}
+                                                <td><span
+                                                        class="btn btn-outline-warning disabled">Undefined</span>
+                                                </td>
+                                            {% endif %}
+                                            {% if row["sentiment"] == "Positive" %}
+                                                <td><a class="btn btn-outline-success disabled">Positive</a>
+                                                </td>
+                                            {% endif %}
+                                            {% if row["sentiment"] == "Negative" %}
+                                                <td><span
+                                                        class="btn btn-outline-danger disabled">Negative</span>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endif %}
+                {% if left_count[3] == 0 %}
+                    <div>
+                        <h5>Data not found!</h5>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="tab-pane fade" id="right_wing" role="tabpanel" aria-labelledby="right_wing_tab"
+                 style="width: 1592px;">
+                {% if right_count[3] != 0 %}
+                    <br>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success shadow-none" role="progressbar"
+                             style="width: {{ right_count[0]*100/right_count[3] }}%"
+                             aria-valuenow="15" aria-valuemin="0"
+                             aria-valuemax="100"> #positive-comments {{ right_count[0] }} </div>
+                        <div class="progress-bar bg-danger shadow-none" role="progressbar"
+                             style="width: {{ right_count[1]*100/right_count[3] }}%"
+                             aria-valuenow="30" aria-valuemin="0"
+                             aria-valuemax="100"> #negative-comments {{ right_count[1] }}</div>
+                        <div class="progress-bar bg-warning shadow-none" role="progressbar"
+                             style="width: {{ right_count[2]*100/right_count[3] }}%"
+                             aria-valuenow="20" aria-valuemin="0"
+                             aria-valuemax="100"> #undefined-comments {{ right_count[2] }}</div>
+                    </div>
+                    <div id='chart_right_wing'></div>
+                    <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Comments history of user {{ user_id }} on
+                            right-wing channels</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="dataTableRight">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Video</th>
+                                    <th>Comment</th>
+                                    <th>Channel</th>
+                                    <th>Comment date</th>
+                                    <th>Comment tag</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in right_wing_comments %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td style="max-width:100px; white-space: nowrap; overflow: hidden;
+                                        text-overflow: ellipsis"><a
+                                                href="https://www.youtube.com/watch?v={{ row["video_id"] }}"
+                                                target="_blank">{{ row["video_title"] }}</a></td>
+                                        <td>{{ row["comment_content"] }}</td>
+                                        <td><a href="https://www.youtube.com/{{ row["channel_title"] }}"
+                                               target="_blank">{{ row["channel_title"] }}</a></td>
+                                        <td>{{ row["comment_postdate"] }}</td>
+                                        {% if row["sentiment"] == "Undefined" %}
+                                            <td><span class="btn btn-outline-warning disabled">Undefined</span>
+                                            </td>
+                                        {% endif %}
+                                        {% if row["sentiment"] == "Positive" %}
+                                            <td><span class="btn btn-outline-success disabled">Positive</span>
+                                            </td>
+                                        {% endif %}
+                                        {% if row["sentiment"] == "Negative" %}
+                                            <td><span class="btn btn-outline-danger disabled">Negative</span>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if right_count[3] == 0 %}
+                    <div>
+                        <h5>Data not found!</h5>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        {#            </div>#}
+        {#        </div>#}
+    {% endif %}
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type='text/javascript'>
+    var graphs_left_wing = {{plot_left_channel | safe}};
+    var graphs_right_wing = {{ plot_right_channel | safe }}
+        Plotly.plot('chart_left_wing', graphs_left_wing, {});
+    Plotly.plot('chart_right_wing', graphs_right_wing, {});
+</script>
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable({
+            language: {
+                searchBuilder: {
+                    title: ''
+                }
+            },
+            dom: 'QfBrtipRS',
+            buttons: [
+                'csv', 'excel', 'pdf'
+            ],
+            // responsive: true,
+            fixedHeader: true,
+            colReorder: true,
+        });
+    });
+</script>
+
+{#<script src="{{ url_for('static', filename='js/table.js') }}"></script>#}
+<script src="{{ url_for('static', filename='js/table_1.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <a>Channel:</a>
+                    <a href="https://www.youtube.com/channel/{{ channel_info["channel_id"] }}"
+                       target="_blank">{{ channel_info["channel_title"] }}</a>
+                </h6>
+
+                <div class="d-flex">
+                    <div class="d-flex align-items-center">
+                        <h6 class="mb-0 me-1">#Videos: {{ channel_info["videos_count"] }}</h6>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <h6 class="mb-0 me-1">#Comments: {{ channel_info["comments_count"] }}</h6>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <h6 class="mb-0 me-1">#Users: {{ channel_info["users_count"] }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id='chart_sentiment'></div>
+                <div id='chart_comment_video'></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Top contributed users:</h6>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User name</th>
+                            <th>#Comments</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in top_user %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><a href="{{ url_for('main.user_tracking',user_id =row['user_id'] ) }}"
+                                       class="menu-link">
+                                    <div data-i18n="Layouts">{{ row['user_id'] }}</div>
+                                </a></td>
+                                <td>{{ row['comments_count'] }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Sentiment distribution in comments of each video:</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    {#                    <table class="table table-bordered" id="dataTable">#}
+                    <table class="table" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Videos</th>
+                            <th>Published date</th>
+                            <th>#Comments</th>
+                            <th>#Positive comments</th>
+                            <th>#Negative comments</th>
+                            <th>#Undefined comments</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in channel_detail %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><a href="https://www.youtube.com/watch?v={{ row["video_id"] }}"
+                                       target="_blank">{{ row['video_title'] }}</a></td>
+                                <td>{{ row['video_date_published'] }}</td>
+                                <td>{{ row['comments_count'] }}</td>
+                                <td>{{ row['pos_comments_count'] }}</td>
+                                <td>{{ row['neg_comments_count'] }}</td>
+                                <td>{{ row['und_comments_count'] }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script type='text/javascript'>
+        var graphs_comment_video = {{plot_div_comment_video | safe}};
+        var graphs_sentiment = {{ plot_div_sentiment | safe }};
+        Plotly.plot('chart_comment_video', graphs_comment_video, {});
+        Plotly.plot('chart_sentiment', graphs_sentiment, {});
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchBuilder: {
+                        title: ''
+                    }
+                },
+                dom: 'QfBrtipRS',
+                buttons: [
+                    'csv', 'excel', 'pdf'
+                ],
+                // responsive: true,
+                fixedHeader: true,
+                colReorder: true,
+            });
+        });
+    </script>
+    {#    <script src="{{ url_for('static', filename='js/table.js') }}"></script>#}
+
+{% endblock %}
